@@ -261,3 +261,24 @@ def take_while(iterable: Iterable, condition) -> Iterable:
         if not condition(item):
             break  # Stop yielding once the condition is no longer satisfied
         yield item
+
+def look(x:StringGrid,character:str,lookwhere:str):
+    """
+    Gives you the character that you look in coming from the character.
+    - lookwhere : A string that tells where to look, LRUD (left,right,up,down)
+    """
+    item = find_grid_item(x,character)
+    if not item:
+        return None
+    else:
+        oldgrid = x.grid
+        currentswiping = {"L":"left","R":"right","U":"up","D":"down"}
+        lookwhere = lookwhere.upper()
+        for letter in lookwhere:
+            if swipe(x,character,currentswiping[letter]) == "OOB":
+                return None
+            x.grid = swipe(x,character,currentswiping[letter])
+        coords = find_grid_item(x,character)
+        print(coords)
+        return StringGrid(oldgrid).grab(coords[0],coords[1])
+
