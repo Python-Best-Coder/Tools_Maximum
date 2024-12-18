@@ -262,23 +262,28 @@ def take_while(iterable: Iterable, condition) -> Iterable:
             break  # Stop yielding once the condition is no longer satisfied
         yield item
 
-def look(x:StringGrid,character:str,lookwhere:str):
-    """
-    Gives you the character that you look in coming from the character.
-    - lookwhere : A string that tells where to look, LRUD (left,right,up,down)
-    """
-    item = find_grid_item(x,character)
-    if not item:
-        return None
-    else:
-        oldgrid = x.grid
-        currentswiping = {"L":"left","R":"right","U":"up","D":"down"}
-        lookwhere = lookwhere.upper()
-        for letter in lookwhere:
-            if swipe(x,character,currentswiping[letter]) == "OOB":
-                return None
-            x.grid = swipe(x,character,currentswiping[letter])
-        coords = find_grid_item(x,character)
-        print(coords)
-        return StringGrid(oldgrid).grab(coords[0],coords[1])
 
+def make_grid(length:int,width:int,character:str):
+    """Makes you a grid made of a character based on the dimensions."""
+    return "\n".join([character*width]*length)
+
+def look(x:StringGrid,character:str,lookwhere:str):
+    """Uses built-in swipe to look in directions."""
+    ch = list(find_grid_item(x,character))
+
+    for letter in lookwhere:
+        if letter == "U":
+            ch[1] -= 1
+        elif letter == "D":
+            ch[1] += 1
+        elif letter == "L":
+            ch[0] -= 1
+        elif letter == "R":
+            ch[0] += 1
+        else:
+            raise ValueError("USE UDLR!")
+    if ch[0] < 0 or ch[0] > x.width or ch[1] < 0 or ch[1] > x.height:
+        return "OOB"
+    else:
+        return x.grab(ch[0],ch[1])
+        
